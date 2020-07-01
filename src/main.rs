@@ -1,6 +1,10 @@
 // File: main.rs
 // TODO: split commands into different files
 
+extern crate dotenv;
+
+use dotenv::dotenv;
+
 use std::{
     collections::HashSet, env
 };
@@ -44,6 +48,7 @@ impl EventHandler for Handler {
 
 fn main() {
     // Configure the client with Discord bot token in the environment.
+    dotenv().ok();
     let token = env::var("DISCORD_TOKEN")
         .expect("Expected a token in the environment.");
     let mut client = Client::new(&token, Handler).expect("Error on creating client");
@@ -107,7 +112,7 @@ fn ping(ctx: &mut Context, msg: &Message) -> CommandResult {
 #[command]
 fn random_message(ctx: &mut Context, msg: &Message) -> CommandResult {
     // TODO: send a random/static message to channel without mention anyone
-    
+
     Ok(())
 }
 
@@ -115,30 +120,30 @@ fn random_message(ctx: &mut Context, msg: &Message) -> CommandResult {
 fn dm(ctx: &mut Context, msg: &Message) -> CommandResult {
     let dm = msg.author.dm(&ctx, |m| {
         m.content("安安");
-        
+
         m
     });
 
     if let Err(why) = dm {
         println!("Error when direct messaging user: {:?}", why);
     }
-    
+
     Ok(())
 }
 
 #[command]
 fn mention_me(ctx: &mut Context, msg: &Message) -> CommandResult {
     // TODO: mention the original author
-    
+
     Ok(())
 }
 
 #[command]
 fn shutdown(ctx: &mut Context, msg: &Message) -> CommandResult {
     // TODO: find a way to shutdown this bot with command
-    
+
     let _ = msg.reply(&ctx, "Shutting down!");
-    
+
     Ok(())
 }
 
