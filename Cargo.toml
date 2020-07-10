@@ -1,7 +1,7 @@
 [package]
 name = "l1276-rust-bot"
 version = "0.1.0"
-authors = ["typas <h86416@gmail.com>"]
+authors = ["Typas <typascake@gmail.com>"]
 description = "A Bot for own Discord Server"
 license = "MIT"
 readme = "README.md"
@@ -12,6 +12,10 @@ edition = "2018"
 [lib]
 name = "l1276"
 path = "src/lib.rs"
+
+[[bin]]
+name = "bot"
+path = "src/main.rs"
 
 [dependencies]
 serenity = "0.8"

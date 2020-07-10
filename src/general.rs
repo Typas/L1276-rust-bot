@@ -1,9 +1,8 @@
 use serenity::{
-    model::{channel::Message,
-            id::{ChannelId, MessageId}},
+    model::channel::Message,
     prelude::*,
     framework::standard::{
-        Args, CommandResult, CommandError,
+        Args, CommandResult,
         macros::{command, group},
     },
 };
@@ -23,7 +22,7 @@ pub fn ping(ctx: &mut Context, msg: &Message) -> CommandResult {
 
 #[command]
 #[aliases("pin")]
-pub fn pin_message(ctx: &mut Context, msg: &Message, mut args: Args) -> CommandResult {
+pub fn pin_message(ctx: &mut Context, msg: &Message, args: Args) -> CommandResult {
     let raw_str = args.raw().collect::<Vec<&str>>();
     let old_msg_id = util::arg_to_messageid(&raw_str[0])?;
 
