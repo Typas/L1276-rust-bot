@@ -1,8 +1,6 @@
 // File: main.rs
 // TODO: split commands into different files
 
-extern crate dotenv;
-
 use dotenv::dotenv;
 
 use std::{
@@ -10,19 +8,18 @@ use std::{
 };
 
 use serenity::{
-    model::{channel::Message, gateway::Ready},
+    model::{channel::Message, gateway::Ready,
+            id::{ChannelId, MessageId}},
     prelude::*,
     // utils::MessageBuilder,
     framework::standard::{
         StandardFramework, Args, CommandOptions,
-        CheckResult, CommandResult,
+        CheckResult, CommandResult, CommandError,
         macros::{command, group, help, check},
     },
 };
 
-#[group]
-#[commands(ping)]
-struct General;
+use l1276::general::*;
 
 #[group]
 #[prefixes("test")]
@@ -100,13 +97,6 @@ fn main() {
     if let Err(why) = client.start() {
         println!("Client error: {:?}", why);
     }
-}
-
-#[command]
-fn ping(ctx: &mut Context, msg: &Message) -> CommandResult {
-    msg.reply(ctx, "Pong!");
-
-    Ok(())
 }
 
 #[command]
