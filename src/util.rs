@@ -1,8 +1,8 @@
-use serenity::{
-    model::id::{ChannelId, MessageId, RoleId, UserId},
-    framework::standard::CommandError,
-};
 use regex::Regex;
+use serenity::{
+    framework::standard::CommandError,
+    model::id::{ChannelId, MessageId, RoleId, UserId},
+};
 
 pub type IdResult<T> = Result<T, CommandError>;
 

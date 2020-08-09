@@ -1,10 +1,10 @@
 use serenity::{
-    model::channel::Message,
     client::Context,
     framework::standard::{
-        CommandResult,
         macros::{command, group},
+        CommandResult,
     },
+    model::channel::Message,
 };
 
 #[group]

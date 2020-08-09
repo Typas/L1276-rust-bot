@@ -1,4 +1,4 @@
-mod util;
+pub mod admin;
 pub mod general;
 pub mod test;
-pub mod admin;
+mod util;

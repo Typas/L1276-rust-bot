@@ -1,10 +1,10 @@
 use serenity::{
+    framework::standard::{
+        macros::{command, group},
+        Args, CommandResult,
+    },
     model::channel::Message,
     prelude::*,
-    framework::standard::{
-        Args, CommandResult,
-        macros::{command, group},
-    },
 };
 
 use crate::util;
@@ -31,10 +31,15 @@ pub fn pin_message(ctx: &mut Context, msg: &Message, args: Args) -> CommandResul
         _ => util::arg_to_channelid(&raw_str[1])?,
     };
 
-    let old_msg = ctx.http.get_message(*channel_id.as_u64(), *old_msg_id.as_u64())?;
+    let old_msg = ctx
+        .http
+        .get_message(*channel_id.as_u64(), *old_msg_id.as_u64())?;
 
     old_msg.pin(&ctx.http)?;
-    let reply_message = format!("Message \"{}\" has been pinned.", &old_msg.content_safe(&ctx.cache));
+    let reply_message = format!(
+        "Message \"{}\" has been pinned.",
+        &old_msg.content_safe(&ctx.cache)
+    );
 
     if let Err(why) = msg.channel_id.say(&ctx.http, &reply_message) {
         eprintln!("Error sending message: {:?}", why);
@@ -53,10 +58,15 @@ pub fn unpin_message(ctx: &mut Context, msg: &Message, args: Args) -> CommandRes
         _ => util::arg_to_channelid(&raw_str[1])?,
     };
 
-    let old_msg = ctx.http.get_message(*channel_id.as_u64(), *old_msg_id.as_u64())?;
+    let old_msg = ctx
+        .http
+        .get_message(*channel_id.as_u64(), *old_msg_id.as_u64())?;
 
     old_msg.unpin(&ctx.http)?;
-    let reply_message = format!("Message \"{}\" has been unpinned.", &old_msg.content_safe(&ctx.cache));
+    let reply_message = format!(
+        "Message \"{}\" has been unpinned.",
+        &old_msg.content_safe(&ctx.cache)
+    );
 
     if let Err(why) = msg.channel_id.say(&ctx.http, &reply_message) {
         eprintln!("Error sending message: {:?}", why);
