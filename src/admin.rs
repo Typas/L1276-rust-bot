@@ -1,17 +1,25 @@
 use serenity::{
     client::Context,
-    framework::standard::{macros::check, Args, CheckResult, CommandOptions},
+    framework::standard::{macros::check, Args, CommandOptions, Reason},
     model::channel::Message,
 };
 
 #[check]
 #[name = "Admin"]
-fn admin_check(ctx: &mut Context, msg: &Message, _: &mut Args, _: &CommandOptions) -> CheckResult {
-    if let Some(member) = msg.member(&ctx.cache) {
-        if let Ok(permissions) = member.permissions(&ctx.cache) {
-            return permissions.administrator().into();
-        }
+pub async fn admin_check(
+    ctx: &Context,
+    msg: &Message,
+    _: &mut Args,
+    _: &CommandOptions,
+) -> Result<(), Reason> {
+    match msg.member(&ctx).await {
+        Ok(member) => match member.permissions(&ctx).await {
+            Ok(perm) => match perm.administrator() {
+                true => Ok(()),
+                false => Err(Reason::User("Not an administrator".to_string())),
+            },
+            Err(e) => Err(Reason::User(e.to_string())),
+        },
+        Err(e) => Err(Reason::User(e.to_string())),
     }
-
-    false.into()
 }

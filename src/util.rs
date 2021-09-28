@@ -1,6 +1,6 @@
 use regex::Regex;
 use serenity::{
-    framework::standard::CommandError,
+    framework::standard::{ArgError, CommandError},
     model::id::{ChannelId, MessageId, RoleId, UserId},
 };
 
@@ -43,21 +43,15 @@ pub fn arg_to_userid(arg: &str) -> IdResult<UserId> {
 
 #[allow(dead_code)]
 pub fn regex_find_u64(arg: &str, re: &Regex) -> IdResult<u64> {
-    let err = CommandError(format!("Cannot parse from argument {}", arg));
     let r = Regex::new("[0-9]+").unwrap();
 
-    let tmp = re.find(arg);
-    let s = match tmp {
-        Some(_) => r.find(arg),
-        None => return Err(err),
-    };
-    let n = match s {
-        Some(s) => s.as_str().parse::<u64>(),
-        None => return Err(err),
-    };
+    re.find(arg).ok_or(ArgError::Parse("not a number"))?;
 
-    match n {
-        Ok(n) => Ok(n),
-        Err(_) => Err(err),
-    }
+    let n: u64 = r
+        .find(arg)
+        .ok_or(ArgError::Parse("not a number"))?
+        .as_str()
+        .parse()?;
+
+    Ok(n)
 }

@@ -1,11 +1,9 @@
-use serenity::{
-    client::Context,
-    framework::standard::{
-        macros::{command, group},
-        CommandResult,
-    },
-    model::channel::Message,
+use serenity::client::Context;
+use serenity::framework::standard::{
+    macros::{command, group},
+    CommandResult,
 };
+use serenity::model::channel::Message;
 
 #[group]
 #[prefixes("test")]
@@ -15,19 +13,22 @@ use serenity::{
 struct Test;
 
 #[command]
-fn random_message(_ctx: &mut Context, _msg: &Message) -> CommandResult {
+pub async fn random_message(_ctx: &Context, _msg: &Message) -> CommandResult {
     // TODO: send a random/static message to channel without mention anyone
 
     Ok(())
 }
 
 #[command]
-fn dm(ctx: &mut Context, msg: &Message) -> CommandResult {
-    let dm = msg.author.dm(&ctx, |m| {
-        m.content("安安");
+pub async fn dm(ctx: &Context, msg: &Message) -> CommandResult {
+    let dm = msg
+        .author
+        .dm(&ctx, |m| {
+            m.content("安安");
 
-        m
-    });
+            m
+        })
+        .await;
 
     if let Err(why) = dm {
         println!("Error when direct messaging user: {:?}", why);
@@ -37,7 +38,7 @@ fn dm(ctx: &mut Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
-fn mention_me(_ctx: &mut Context, _msg: &Message) -> CommandResult {
+pub async fn mention_me(_ctx: &Context, _msg: &Message) -> CommandResult {
     // TODO: mention the original author
 
     Ok(())

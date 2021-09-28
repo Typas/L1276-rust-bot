@@ -1,6 +1,6 @@
 [package]
 name = "l1276-rust-bot"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Typas <typascake@gmail.com>"]
 description = "A Bot for own Discord Server"
 license = "MIT"
@@ -18,6 +18,7 @@ name = "bot"
 path = "src/main.rs"
 
 [dependencies]
-serenity = "0.9"
+tokio = { version = "1.12", features = ["macros", "rt-multi-thread"] }
+serenity = "0.10"
 dotenv = "0.15"
 regex = "1"

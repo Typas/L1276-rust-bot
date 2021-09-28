@@ -1,11 +1,10 @@
-use serenity::{
-    framework::standard::{
-        macros::{command, group},
-        Args, CommandResult,
-    },
-    model::channel::Message,
-    prelude::*,
+use serenity::client::Context;
+use serenity::framework::standard::{
+    macros::{command, group},
+    Args, CommandResult,
 };
+use serenity::model::channel::Message;
+use serenity::utils::MessageBuilder;
 
 use crate::util;
 
@@ -14,15 +13,15 @@ use crate::util;
 pub struct General;
 
 #[command]
-pub fn ping(ctx: &mut Context, msg: &Message) -> CommandResult {
-    msg.reply(ctx, "Pong!")?;
+pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.reply(ctx, "Pong!").await?;
 
     Ok(())
 }
 
 #[command]
 #[aliases("pin")]
-pub fn pin_message(ctx: &mut Context, msg: &Message, args: Args) -> CommandResult {
+pub async fn pin_message(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let raw_str = args.raw().collect::<Vec<&str>>();
     let old_msg_id = util::arg_to_messageid(&raw_str[0])?;
 
@@ -33,24 +32,23 @@ pub fn pin_message(ctx: &mut Context, msg: &Message, args: Args) -> CommandResul
 
     let old_msg = ctx
         .http
-        .get_message(*channel_id.as_u64(), *old_msg_id.as_u64())?;
+        .get_message(*channel_id.as_u64(), *old_msg_id.as_u64())
+        .await?;
 
-    old_msg.pin(&ctx.http)?;
-    let reply_message = format!(
-        "Message \"{}\" has been pinned.",
-        &old_msg.content_safe(&ctx.cache)
-    );
-
-    if let Err(why) = msg.channel_id.say(&ctx.http, &reply_message) {
-        eprintln!("Error sending message: {:?}", why);
-    }
+    old_msg.pin(&ctx.http).await?;
+    let record: String = MessageBuilder::new()
+        .push("Message ")
+        .push_mono_safe(&old_msg.content)
+        .push(" has been pinned.")
+        .build();
+    println!("{}", record);
 
     Ok(())
 }
 
 #[command]
 #[aliases("unpin")]
-pub fn unpin_message(ctx: &mut Context, msg: &Message, args: Args) -> CommandResult {
+pub async fn unpin_message(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let raw_str = args.raw().collect::<Vec<&str>>();
     let old_msg_id = util::arg_to_messageid(&raw_str[0])?;
     let channel_id = match raw_str.len() {
@@ -60,15 +58,19 @@ pub fn unpin_message(ctx: &mut Context, msg: &Message, args: Args) -> CommandRes
 
     let old_msg = ctx
         .http
-        .get_message(*channel_id.as_u64(), *old_msg_id.as_u64())?;
+        .get_message(*channel_id.as_u64(), *old_msg_id.as_u64())
+        .await?;
 
-    old_msg.unpin(&ctx.http)?;
-    let reply_message = format!(
-        "Message \"{}\" has been unpinned.",
-        &old_msg.content_safe(&ctx.cache)
-    );
+    old_msg.unpin(&ctx.http).await?;
 
-    if let Err(why) = msg.channel_id.say(&ctx.http, &reply_message) {
+    let record: String = MessageBuilder::new()
+        .push("Message ")
+        .push_mono_safe(&old_msg.content)
+        .push(" has been unpinned.")
+        .build();
+    println!("{}", record);
+
+    if let Err(why) = msg.channel_id.say(&ctx.http, &record).await {
         eprintln!("Error sending message: {:?}", why);
     }
 
